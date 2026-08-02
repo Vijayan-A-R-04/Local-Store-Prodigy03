@@ -96,7 +96,7 @@ const products = [
     category: "snacks",
     price: 250, 
     rating: "⭐ 4.8 (230)",
-    image: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500&auto=format&fit=crop&q=60",
+    image: "images/almonds.png",
     description: "Crunchy premium California almonds packed with healthy nutrients.",
     badge: "Superfood"
   },
@@ -106,7 +106,7 @@ const products = [
     category: "dairy",
     price: 220, 
     rating: "⭐ 4.7 (115)",
-    image: "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=500&auto=format&fit=crop&q=60",
+    image: "images/cheddar_cheese.png",
     description: "Sharp and creamy natural cheddar cheese block.",
     badge: "Artisanal"
   },
@@ -116,7 +116,7 @@ const products = [
     category: "pantry",
     price: 95, 
     rating: "⭐ 4.9 (80)",
-    image: "https://images.unsplash.com/photo-1626197031507-c170a04d9e9e?w=500&auto=format&fit=crop&q=60",
+    image: "images/pink_salt.png",
     description: "Unrefined pure mineral-rich Himalayan pink salt granules.",
     badge: "Pure"
   }
