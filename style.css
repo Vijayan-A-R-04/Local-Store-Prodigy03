@@ -41,6 +41,10 @@
 }
 
 /* Reset & Base */
+.hidden {
+  display: none !important;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

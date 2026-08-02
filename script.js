@@ -129,12 +129,16 @@ function switchAuthTab(tab) {
 
   if (tab === 'login') {
     loginForm.classList.remove('hidden');
+    loginForm.style.display = 'flex';
     regForm.classList.add('hidden');
+    regForm.style.display = 'none';
     loginTabBtn.classList.add('active');
     regTabBtn.classList.remove('active');
   } else {
     loginForm.classList.add('hidden');
+    loginForm.style.display = 'none';
     regForm.classList.remove('hidden');
+    regForm.style.display = 'flex';
     loginTabBtn.classList.remove('active');
     regTabBtn.classList.add('active');
   }
