@@ -76,7 +76,7 @@ const products = [
     category: "snacks",
     price: 210, 
     rating: "⭐ 4.9 (160)",
-    image: "https://images.unsplash.com/photo-1627435601361-ec25f5b1d0e5?w=500&auto=format&fit=crop&q=60",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&auto=format&fit=crop&q=60",
     description: "Antioxidant-rich organic green tea bags for daily wellness.",
     badge: "Organic"
   },
@@ -96,7 +96,7 @@ const products = [
     category: "snacks",
     price: 250, 
     rating: "⭐ 4.8 (230)",
-    image: "https://images.unsplash.com/photo-1508748303406-7bc54fb077e8?w=500&auto=format&fit=crop&q=60",
+    image: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500&auto=format&fit=crop&q=60",
     description: "Crunchy premium California almonds packed with healthy nutrients.",
     badge: "Superfood"
   },
@@ -106,7 +106,7 @@ const products = [
     category: "dairy",
     price: 220, 
     rating: "⭐ 4.7 (115)",
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=500&auto=format&fit=crop&q=60",
+    image: "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=500&auto=format&fit=crop&q=60",
     description: "Sharp and creamy natural cheddar cheese block.",
     badge: "Artisanal"
   },
@@ -116,7 +116,7 @@ const products = [
     category: "pantry",
     price: 95, 
     rating: "⭐ 4.9 (80)",
-    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=60",
+    image: "https://images.unsplash.com/photo-1626197031507-c170a04d9e9e?w=500&auto=format&fit=crop&q=60",
     description: "Unrefined pure mineral-rich Himalayan pink salt granules.",
     badge: "Pure"
   }
