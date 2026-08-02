@@ -69,6 +69,20 @@ const products = [
     price: 110, 
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRk3R64Dwef5Uz14_DgRyMY188phb5CR6GH4Q&s",
     description: "Refreshing green tea bags packed with antioxidants."
+  },
+  { 
+    id: 11, 
+    name: "Dark Chocolate (100g)", 
+    price: 140, 
+    image: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=500&auto=format&fit=crop&q=60",
+    description: "70% cocoa rich dark chocolate bar."
+  },
+  { 
+    id: 12, 
+    name: "Almonds (250g)", 
+    price: 250, 
+    image: "https://images.unsplash.com/photo-1508748303406-7bc54fb077e8?w=500&auto=format&fit=crop&q=60",
+    description: "Crunchy premium California almonds."
   }
 ];
 
