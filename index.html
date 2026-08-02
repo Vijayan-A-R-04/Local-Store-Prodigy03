@@ -156,7 +156,7 @@
     <div class="modal-card orders-card">
       <button class="close-modal-btn" onclick="closeOrdersModalDirect()">✕</button>
       <h2>📦 Order History</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Live orders fetched from backend database REST API</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Track your active and past grocery orders</p>
       
       <div id="orders-list-container" class="orders-list">
         <!-- Order History loads dynamically -->
@@ -178,7 +178,7 @@
   <div id="checkout-modal" class="modal-overlay hidden" onclick="closeCheckoutModal(event)">
     <div class="modal-card order-success-card">
       <div class="success-checkmark">🎉</div>
-      <h2>Order Placed & Saved to Database!</h2>
+      <h2>Order Placed Successfully!</h2>
       <p class="order-id">Order Reference: <strong id="order-ref">#LS-9482</strong></p>
       
       <div class="order-summary-box" id="order-summary-box">
@@ -186,7 +186,7 @@
       </div>
 
       <div class="delivery-timeline">
-        <div class="timeline-step done">✓ Saved to Database API</div>
+        <div class="timeline-step done">✓ Order Confirmed</div>
         <div class="timeline-step active">🚚 Packing & Delivery (30 mins)</div>
       </div>
 

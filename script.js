@@ -18,6 +18,7 @@ const initialProducts = [
 let products = [...initialProducts];
 let cart = [];
 let wishlist = [];
+let myOrders = [];
 let currentUser = null;
 let authToken = null;
 let activeCategory = 'all';
@@ -56,12 +57,14 @@ function loadStoredState() {
   try {
     const savedCart = localStorage.getItem('localstore_cart');
     const savedWishlist = localStorage.getItem('localstore_wishlist');
+    const savedOrders = localStorage.getItem('localstore_orders');
     const savedTheme = localStorage.getItem('localstore_theme');
     const savedUser = localStorage.getItem('localstore_user');
     const savedToken = localStorage.getItem('localstore_token');
 
     if (savedCart) cart = JSON.parse(savedCart);
     if (savedWishlist) wishlist = JSON.parse(savedWishlist);
+    if (savedOrders) myOrders = JSON.parse(savedOrders);
     if (savedUser) currentUser = JSON.parse(savedUser);
     if (savedToken) authToken = savedToken;
     if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
@@ -74,6 +77,7 @@ function saveState() {
   try {
     localStorage.setItem('localstore_cart', JSON.stringify(cart));
     localStorage.setItem('localstore_wishlist', JSON.stringify(wishlist));
+    localStorage.setItem('localstore_orders', JSON.stringify(myOrders));
     localStorage.setItem('localstore_theme', document.documentElement.getAttribute('data-theme') || 'light');
     if (currentUser) localStorage.setItem('localstore_user', JSON.stringify(currentUser));
     else localStorage.removeItem('localstore_user');
@@ -226,35 +230,38 @@ async function openOrdersModal() {
   const container = document.getElementById('orders-list-container');
   modal.classList.remove('hidden');
 
-  container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted);">Loading orders from database...</div>`;
+  let ordersToDisplay = [...myOrders];
 
   try {
     const res = await fetch(`${API_BASE}/orders`);
     const json = await res.json();
-
-    if (json.success && json.data.length > 0) {
-      container.innerHTML = json.data.map(order => `
-        <div class="order-card-row">
-          <div class="order-card-header">
-            <strong>${order.orderRef}</strong>
-            <span class="order-status-badge">🚚 ${order.status}</span>
-          </div>
-          <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">
-            Date: ${new Date(order.createdAt).toLocaleDateString()} | Customer: ${order.customerName}
-          </div>
-          <div style="font-size: 0.9rem; font-weight:600;">
-            ${order.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
-          </div>
-          <div style="margin-top: 8px; font-weight: 700; color: var(--primary);">
-            Total: ₹${order.totalAmount}
-          </div>
-        </div>
-      `).join('');
-    } else {
-      container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted);">No orders found in database history.</div>`;
+    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+      ordersToDisplay = json.data;
     }
   } catch (err) {
-    container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted);">No orders found in database history.</div>`;
+    // Uses myOrders fallback
+  }
+
+  if (ordersToDisplay.length > 0) {
+    container.innerHTML = ordersToDisplay.map(order => `
+      <div class="order-card-row">
+        <div class="order-card-header">
+          <strong>${order.orderRef}</strong>
+          <span class="order-status-badge">🚚 ${order.status || 'Packing & Delivery (30 mins)'}</span>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">
+          Date: ${new Date(order.createdAt || Date.now()).toLocaleDateString()} | Customer: ${order.customerName}
+        </div>
+        <div style="font-size: 0.9rem; font-weight:600;">
+          ${order.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
+        </div>
+        <div style="margin-top: 8px; font-weight: 700; color: var(--primary);">
+          Total: ₹${order.totalAmount}
+        </div>
+      </div>
+    `).join('');
+  } else {
+    container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted);">No previous orders found. Place your first order to track it here!</div>`;
   }
 }
 
@@ -290,7 +297,7 @@ function getFilteredProducts() {
     if (activeCategory === 'all') {
       matchesCategory = true;
     } else if (activeCategory === 'wishlist') {
-      matchesCategory = wishlist.includes(p.id);
+      matchesCategory = wishlist.includes(parseInt(p.id, 10));
     } else {
       matchesCategory = p.category === activeCategory;
     }
@@ -324,13 +331,22 @@ function renderProducts() {
 
   if (filtered.length === 0) {
     grid.innerHTML = '';
+    const h3El = emptyState.querySelector('h3');
+    const pEl = emptyState.querySelector('p');
+    if (activeCategory === 'wishlist') {
+      if (h3El) h3El.textContent = 'Your Saved Wishlist is Empty';
+      if (pEl) pEl.textContent = 'Click the 🤍 heart icon on any product card to save items for quick access!';
+    } else {
+      if (h3El) h3El.textContent = 'No matching items found';
+      if (pEl) pEl.textContent = 'Try searching for another keyword or clear filter criteria.';
+    }
     emptyState.classList.remove('hidden');
     return;
   }
 
   emptyState.classList.add('hidden');
   grid.innerHTML = filtered.map(p => {
-    const isWishlisted = wishlist.includes(p.id);
+    const isWishlisted = wishlist.includes(parseInt(p.id, 10));
     const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'><rect width='100%' height='100%' fill='%23e2e8f0'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23475569' font-family='sans-serif' font-size='16'>${encodeURIComponent(p.name)}</text></svg>`;
 
     return `
@@ -427,15 +443,16 @@ function handleSortChange() {
 
 // Wishlist Logic
 function toggleWishlist(productId) {
-  const index = wishlist.indexOf(productId);
-  const item = products.find(p => p.id === productId);
+  const numericId = parseInt(productId, 10);
+  const index = wishlist.indexOf(numericId);
+  const item = products.find(p => parseInt(p.id, 10) === numericId);
 
   if (index > -1) {
     wishlist.splice(index, 1);
-    showToast(`Removed ${item.name} from Wishlist`, '💔');
+    if (item) showToast(`Removed ${item.name} from Wishlist`, '💔');
   } else {
-    wishlist.push(productId);
-    showToast(`Added ${item.name} to Wishlist`, '❤️');
+    wishlist.push(numericId);
+    if (item) showToast(`Added ${item.name} to Wishlist`, '❤️');
   }
 
   saveState();
@@ -654,12 +671,17 @@ async function checkout() {
     items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
     totalAmount: totalPayable,
     discountAmount: discountVal,
-    deliveryFee: totalPayable > subtotalVal ? 30 : 0
+    deliveryFee: totalPayable > subtotalVal ? 30 : 0,
+    status: 'Packing & Delivery (30 mins)',
+    createdAt: new Date().toISOString()
   };
+
+  // Unshift into local order history & save state
+  myOrders.unshift(orderData);
 
   // Post Order to REST API
   try {
-    await fetch(`${API_BASE}/orders`, {
+    fetch(`${API_BASE}/orders`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(orderData)
