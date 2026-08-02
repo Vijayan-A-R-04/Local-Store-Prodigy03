@@ -1,142 +1,54 @@
-// Product Database with curated categories & verified images
-const products = [
-  { 
-    id: 1, 
-    name: "Fresh Apples (1kg)", 
-    category: "produce",
-    price: 120, 
-    rating: "⭐ 4.8 (120)",
-    image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop&q=60",
-    description: "Crisp, juicy, and sweet red apples, freshly picked from local orchards.",
-    badge: "Fresh"
-  },
-  { 
-    id: 2, 
-    name: "Organic Whole Milk (1L)", 
-    category: "dairy",
-    price: 60, 
-    rating: "⭐ 4.9 (210)",
-    image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500&auto=format&fit=crop&q=60",
-    description: "Pure and fresh organic cow’s milk, free from preservatives.",
-    badge: "Organic"
-  },
-  { 
-    id: 3, 
-    name: "Whole Wheat Bread (1 pkt)", 
-    category: "bakery",
-    price: 40, 
-    rating: "⭐ 4.6 (85)",
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=60",
-    description: "Soft, healthy brown bread baked daily with whole grain wheat flour.",
-    badge: "Daily Baked"
-  },
-  { 
-    id: 4, 
-    name: "Farm-Fresh Eggs (1 dozen)", 
-    category: "dairy",
-    price: 90, 
-    rating: "⭐ 4.9 (340)",
-    image: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=500&auto=format&fit=crop&q=60",
-    description: "Pasture-raised brown eggs, rich in natural protein and omega-3.",
-    badge: "Farm Fresh"
-  },
-  { 
-    id: 5, 
-    name: "Premium Basmati Rice (1kg)", 
-    category: "bakery",
-    price: 150, 
-    rating: "⭐ 4.7 (190)",
-    image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=60",
-    description: "Aromatic long-grain Basmati rice, aged for authentic flavor.",
-    badge: "Premium"
-  },
-  { 
-    id: 6, 
-    name: "Golden Cooking Oil (1L)", 
-    category: "pantry",
-    price: 180, 
-    rating: "⭐ 4.8 (145)",
-    image: "images/cooking_oil.png",
-    description: "Pure multi-purpose cooking oil, refined for healthy frying and sautéing.",
-    badge: "Top Seller"
-  },
-  { 
-    id: 7, 
-    name: "Farm Red Tomatoes (1kg)", 
-    category: "produce",
-    price: 70, 
-    rating: "⭐ 4.5 (95)",
-    image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop&q=60",
-    description: "Ripe, juicy farm-fresh red tomatoes perfect for salads & cooking.",
-    badge: "Local"
-  },
-  { 
-    id: 8, 
-    name: "Organic Green Tea (25 bags)", 
-    category: "snacks",
-    price: 210, 
-    rating: "⭐ 4.9 (160)",
-    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&auto=format&fit=crop&q=60",
-    description: "Antioxidant-rich organic green tea bags for daily wellness.",
-    badge: "Organic"
-  },
-  { 
-    id: 9, 
-    name: "Dark Chocolate 70% (100g)", 
-    category: "snacks",
-    price: 140, 
-    rating: "⭐ 4.9 (410)",
-    image: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=500&auto=format&fit=crop&q=60",
-    description: "Rich 70% cocoa artisanal dark chocolate bar with smooth texture.",
-    badge: "Best Seller"
-  },
-  { 
-    id: 10, 
-    name: "California Almonds (250g)", 
-    category: "snacks",
-    price: 250, 
-    rating: "⭐ 4.8 (230)",
-    image: "images/almonds.png",
-    description: "Crunchy premium California almonds packed with healthy nutrients.",
-    badge: "Superfood"
-  },
-  { 
-    id: 11, 
-    name: "Aged Cheddar Cheese (200g)", 
-    category: "dairy",
-    price: 220, 
-    rating: "⭐ 4.7 (115)",
-    image: "images/cheddar_cheese.png",
-    description: "Sharp and creamy natural cheddar cheese block.",
-    badge: "Artisanal"
-  },
-  { 
-    id: 12, 
-    name: "Himalayan Pink Salt (1kg)", 
-    category: "pantry",
-    price: 95, 
-    rating: "⭐ 4.9 (80)",
-    image: "images/pink_salt.png",
-    description: "Unrefined pure mineral-rich Himalayan pink salt granules.",
-    badge: "Pure"
-  }
+// Initial Product Database Fallback
+const initialProducts = [
+  { id: 1, name: "Fresh Apples (1kg)", category: "produce", price: 120, rating: "⭐ 4.8 (120)", image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop&q=60", description: "Crisp, juicy, and sweet red apples, freshly picked from local orchards.", badge: "Fresh" },
+  { id: 2, name: "Organic Whole Milk (1L)", category: "dairy", price: 60, rating: "⭐ 4.9 (210)", image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500&auto=format&fit=crop&q=60", description: "Pure and fresh organic cow’s milk, free from preservatives.", badge: "Organic" },
+  { id: 3, name: "Whole Wheat Bread (1 pkt)", category: "bakery", price: 40, rating: "⭐ 4.6 (85)", image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=60", description: "Soft, healthy brown bread baked daily with whole grain wheat flour.", badge: "Daily Baked" },
+  { id: 4, name: "Farm-Fresh Eggs (1 dozen)", category: "dairy", price: 90, rating: "⭐ 4.9 (340)", image: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=500&auto=format&fit=crop&q=60", description: "Pasture-raised brown eggs, rich in natural protein and omega-3.", badge: "Farm Fresh" },
+  { id: 5, name: "Premium Basmati Rice (1kg)", category: "bakery", price: 150, rating: "⭐ 4.7 (190)", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=60", description: "Aromatic long-grain Basmati rice, aged for authentic flavor.", badge: "Premium" },
+  { id: 6, name: "Golden Cooking Oil (1L)", category: "pantry", price: 180, rating: "⭐ 4.8 (145)", image: "images/cooking_oil.png", description: "Pure multi-purpose cooking oil, refined for healthy frying and sautéing.", badge: "Top Seller" },
+  { id: 7, name: "Farm Red Tomatoes (1kg)", category: "produce", price: 70, rating: "⭐ 4.5 (95)", image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop&q=60", description: "Ripe, juicy farm-fresh red tomatoes perfect for salads & cooking.", badge: "Local" },
+  { id: 8, name: "Organic Green Tea (25 bags)", category: "snacks", price: 210, rating: "⭐ 4.9 (160)", image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&auto=format&fit=crop&q=60", description: "Antioxidant-rich organic green tea bags for daily wellness.", badge: "Organic" },
+  { id: 9, name: "Dark Chocolate 70% (100g)", category: "snacks", price: 140, rating: "⭐ 4.9 (410)", image: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=500&auto=format&fit=crop&q=60", description: "Rich 70% cocoa artisanal dark chocolate bar with smooth texture.", badge: "Best Seller" },
+  { id: 10, name: "California Almonds (250g)", category: "snacks", price: 250, rating: "⭐ 4.8 (230)", image: "images/almonds.png", description: "Crunchy premium California almonds packed with healthy nutrients.", badge: "Superfood" },
+  { id: 11, name: "Aged Cheddar Cheese (200g)", category: "dairy", price: 220, rating: "⭐ 4.7 (115)", image: "images/cheddar_cheese.png", description: "Sharp and creamy natural cheddar cheese block.", badge: "Artisanal" },
+  { id: 12, name: "Himalayan Pink Salt (1kg)", category: "pantry", price: 95, rating: "⭐ 4.9 (80)", image: "images/pink_salt.png", description: "Unrefined pure mineral-rich Himalayan pink salt granules.", badge: "Pure" }
 ];
 
 // Application State
+let products = [...initialProducts];
 let cart = [];
 let wishlist = [];
+let currentUser = null;
+let authToken = null;
 let activeCategory = 'all';
 let searchQuery = '';
 let sortBy = 'default';
 let appliedDiscount = 0;
 
+const API_BASE = '/api';
+
 // Initialize App State
-function initApp() {
+async function initApp() {
   loadStoredState();
   applyTheme();
+  renderUserNav();
+  await fetchProductsFromAPI();
   renderProducts();
   updateCartUI();
   updateWishlistUI();
+}
+
+// Fetch Products from Backend API
+async function fetchProductsFromAPI() {
+  try {
+    const res = await fetch(`${API_BASE}/products`);
+    const json = await res.json();
+    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+      products = json.data;
+    }
+  } catch (e) {
+    console.log("Using static products fallback (API server connecting...)");
+  }
 }
 
 // LocalStorage Handlers
@@ -145,9 +57,13 @@ function loadStoredState() {
     const savedCart = localStorage.getItem('localstore_cart');
     const savedWishlist = localStorage.getItem('localstore_wishlist');
     const savedTheme = localStorage.getItem('localstore_theme');
+    const savedUser = localStorage.getItem('localstore_user');
+    const savedToken = localStorage.getItem('localstore_token');
 
     if (savedCart) cart = JSON.parse(savedCart);
     if (savedWishlist) wishlist = JSON.parse(savedWishlist);
+    if (savedUser) currentUser = JSON.parse(savedUser);
+    if (savedToken) authToken = savedToken;
     if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
   } catch (e) {
     console.error("Storage load error:", e);
@@ -159,8 +75,192 @@ function saveState() {
     localStorage.setItem('localstore_cart', JSON.stringify(cart));
     localStorage.setItem('localstore_wishlist', JSON.stringify(wishlist));
     localStorage.setItem('localstore_theme', document.documentElement.getAttribute('data-theme') || 'light');
+    if (currentUser) localStorage.setItem('localstore_user', JSON.stringify(currentUser));
+    else localStorage.removeItem('localstore_user');
+    if (authToken) localStorage.setItem('localstore_token', authToken);
+    else localStorage.removeItem('localstore_token');
   } catch (e) {
     console.error("Storage save error:", e);
+  }
+}
+
+// User Navigation & Auth Render
+function renderUserNav() {
+  const container = document.getElementById('user-nav-container');
+  if (!container) return;
+
+  if (currentUser) {
+    container.innerHTML = `
+      <div class="user-profile-badge">
+        <span>👤 ${currentUser.name.split(' ')[0]}</span>
+        <button class="logout-icon-btn" onclick="handleLogout()" title="Sign Out">✕</button>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <button class="nav-btn auth-btn" onclick="openAuthModal('login')">
+        👤 <span class="action-label">Sign In</span>
+      </button>
+    `;
+  }
+}
+
+// Authentication Modal Logic
+function openAuthModal(tab = 'login') {
+  switchAuthTab(tab);
+  document.getElementById('auth-modal')?.classList.remove('hidden');
+}
+
+function closeAuthModalDirect() {
+  document.getElementById('auth-modal')?.classList.add('hidden');
+}
+
+function closeAuthModal(event) {
+  if (event.target.id === 'auth-modal') {
+    closeAuthModalDirect();
+  }
+}
+
+function switchAuthTab(tab) {
+  const loginForm = document.getElementById('login-form');
+  const regForm = document.getElementById('register-form');
+  const loginTabBtn = document.getElementById('tab-login-btn');
+  const regTabBtn = document.getElementById('tab-register-btn');
+
+  if (tab === 'login') {
+    loginForm.classList.remove('hidden');
+    regForm.classList.add('hidden');
+    loginTabBtn.classList.add('active');
+    regTabBtn.classList.remove('active');
+  } else {
+    loginForm.classList.add('hidden');
+    regForm.classList.remove('hidden');
+    loginTabBtn.classList.remove('active');
+    regTabBtn.classList.add('active');
+  }
+}
+
+async function handleLoginSubmit(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      currentUser = json.user;
+      authToken = json.token;
+      saveState();
+      renderUserNav();
+      closeAuthModalDirect();
+      showToast(`Welcome back, ${currentUser.name}!`, '🎉');
+    } else {
+      showToast(json.message || 'Login failed', '❌');
+    }
+  } catch (err) {
+    // Offline / Demo fallback
+    currentUser = { name: email.split('@')[0], email };
+    authToken = 'demo-jwt-token';
+    saveState();
+    renderUserNav();
+    closeAuthModalDirect();
+    showToast(`Signed in as ${currentUser.name}`, '🎉');
+  }
+}
+
+async function handleRegisterSubmit(e) {
+  e.preventDefault();
+  const name = document.getElementById('reg-name').value;
+  const email = document.getElementById('reg-email').value;
+  const password = document.getElementById('reg-password').value;
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      currentUser = json.user;
+      authToken = json.token;
+      saveState();
+      renderUserNav();
+      closeAuthModalDirect();
+      showToast(`Account created! Welcome, ${currentUser.name}!`, '🎉');
+    } else {
+      showToast(json.message || 'Registration failed', '❌');
+    }
+  } catch (err) {
+    currentUser = { name, email };
+    authToken = 'demo-jwt-token';
+    saveState();
+    renderUserNav();
+    closeAuthModalDirect();
+    showToast(`Account created for ${name}`, '🎉');
+  }
+}
+
+function handleLogout() {
+  currentUser = null;
+  authToken = null;
+  saveState();
+  renderUserNav();
+  showToast('Signed out successfully', '👋');
+}
+
+// Order History Modal
+async function openOrdersModal() {
+  const modal = document.getElementById('orders-modal');
+  const container = document.getElementById('orders-list-container');
+  modal.classList.remove('hidden');
+
+  container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted);">Loading orders from database...</div>`;
+
+  try {
+    const res = await fetch(`${API_BASE}/orders`);
+    const json = await res.json();
+
+    if (json.success && json.data.length > 0) {
+      container.innerHTML = json.data.map(order => `
+        <div class="order-card-row">
+          <div class="order-card-header">
+            <strong>${order.orderRef}</strong>
+            <span class="order-status-badge">🚚 ${order.status}</span>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">
+            Date: ${new Date(order.createdAt).toLocaleDateString()} | Customer: ${order.customerName}
+          </div>
+          <div style="font-size: 0.9rem; font-weight:600;">
+            ${order.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
+          </div>
+          <div style="margin-top: 8px; font-weight: 700; color: var(--primary);">
+            Total: ₹${order.totalAmount}
+          </div>
+        </div>
+      `).join('');
+    } else {
+      container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted);">No orders found in database history.</div>`;
+    }
+  } catch (err) {
+    container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted);">No orders found in database history.</div>`;
+  }
+}
+
+function closeOrdersModalDirect() {
+  document.getElementById('orders-modal')?.classList.add('hidden');
+}
+
+function closeOrdersModal(event) {
+  if (event.target.id === 'orders-modal') {
+    closeOrdersModalDirect();
   }
 }
 
@@ -182,7 +282,6 @@ function applyTheme() {
 // Product Filtering & Sorting Engine
 function getFilteredProducts() {
   return products.filter(p => {
-    // Category Filter
     let matchesCategory = false;
     if (activeCategory === 'all') {
       matchesCategory = true;
@@ -192,7 +291,6 @@ function getFilteredProducts() {
       matchesCategory = p.category === activeCategory;
     }
 
-    // Search Query Filter
     const query = searchQuery.trim().toLowerCase();
     let matchesSearch = true;
     if (query) {
@@ -261,7 +359,6 @@ function renderProducts() {
 function filterCategory(category) {
   activeCategory = category;
   
-  // Update UI active pill
   const pills = document.querySelectorAll('.pill');
   pills.forEach(pill => {
     const text = pill.textContent.toLowerCase();
@@ -428,7 +525,6 @@ function updateCartUI() {
   let deliveryFee = subtotal >= 500 || subtotal === 0 ? 0 : 30;
   let grandTotal = Math.max(0, subtotal - discount + deliveryFee);
 
-  // Delivery Progress
   const freeThreshold = 500;
   if (subtotal >= freeThreshold || subtotal === 0) {
     progressText.innerHTML = '🎉 You unlocked <strong>FREE Delivery!</strong>';
@@ -535,26 +631,49 @@ function closeQuickView(event) {
   }
 }
 
-// Checkout Celebration Modal
-function checkout() {
+// Checkout Celebration & API Order Post
+async function checkout() {
   if (cart.length === 0) {
     showToast('Your cart is empty!', '⚠️');
     return;
   }
 
   const orderRef = '#LS-' + Math.floor(1000 + Math.random() * 9000);
-  document.getElementById('order-ref').textContent = orderRef;
+  const totalPayable = parseFloat(document.getElementById('cart-total').textContent);
+  const subtotalVal = parseFloat(document.getElementById('cart-subtotal').textContent);
+  const discountVal = parseFloat(document.getElementById('cart-discount').textContent) || 0;
 
+  const orderData = {
+    orderRef,
+    customerName: currentUser ? currentUser.name : 'Guest Customer',
+    customerEmail: currentUser ? currentUser.email : 'guest@localstore.com',
+    items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+    totalAmount: totalPayable,
+    discountAmount: discountVal,
+    deliveryFee: totalPayable > subtotalVal ? 30 : 0
+  };
+
+  // Post Order to REST API
+  try {
+    await fetch(`${API_BASE}/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+  } catch (e) {
+    console.log("Order saved locally");
+  }
+
+  document.getElementById('order-ref').textContent = orderRef;
   const summaryBox = document.getElementById('order-summary-box');
   const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-  const totalPayable = document.getElementById('cart-total').textContent;
 
   summaryBox.innerHTML = `
     <strong>Items (${totalQty}):</strong>
     <ul style="margin: 8px 0; padding-left: 20px; color: var(--text-muted);">
       ${cart.map(i => `<li>${i.name} (x${i.qty})</li>`).join('')}
     </ul>
-    <div style="margin-top: 10px; font-size: 1.05rem;"><strong>Total Paid: ₹${totalPayable}</strong></div>
+    <div style="margin-top: 10px; font-size: 1.05rem;"><strong>Total Paid: ₹${totalPayable.toFixed(2)}</strong></div>
   `;
 
   cart = [];

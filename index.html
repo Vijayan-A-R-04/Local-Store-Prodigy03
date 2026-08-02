@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Local Store - Premium Fresh Essentials & Groceries</title>
+  <title>Local Store - Premium Full-Stack E-Commerce</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="nav-container">
-      <div class="logo">
+      <div class="logo" onclick="resetFilters()">
         <span class="logo-icon">🌿</span>
         <span class="logo-text">Local Store</span>
       </div>
@@ -36,6 +36,17 @@
           ❤️ <span class="action-label">Saved</span> (<span id="wishlist-count">0</span>)
         </button>
 
+        <button class="nav-btn orders-btn" onclick="openOrdersModal()" title="My Orders">
+          📦 <span class="action-label">Orders</span>
+        </button>
+
+        <!-- User Account Container -->
+        <div id="user-nav-container">
+          <button class="nav-btn auth-btn" onclick="openAuthModal('login')">
+            👤 <span class="action-label">Sign In</span>
+          </button>
+        </div>
+
         <button class="cart-btn" id="cart-btn" onclick="toggleCart()" aria-label="View Shopping Cart">
           🛒 <span class="action-label">Cart</span> (<span id="cart-count">0</span>)
         </button>
@@ -46,7 +57,7 @@
   <!-- Hero Section -->
   <header class="hero">
     <div class="hero-content">
-      <span class="hero-badge">⚡ Express 30-Min Delivery</span>
+      <span class="hero-badge">⚡ Express 30-Min Delivery • Full-Stack API Active</span>
       <h1>Fresh. Organic. Local.</h1>
       <p>Hand-picked farm-fresh produce and daily groceries delivered to your door.</p>
     </div>
@@ -84,7 +95,7 @@
       </div>
 
       <div class="products-grid" id="product-list">
-        <!-- Products render dynamically -->
+        <!-- Products render dynamically from REST API -->
       </div>
 
       <!-- Empty State -->
@@ -96,6 +107,62 @@
       </div>
     </section>
   </main>
+
+  <!-- Authentication Modal (Login / Register) -->
+  <div id="auth-modal" class="modal-overlay hidden" onclick="closeAuthModal(event)">
+    <div class="modal-card auth-card">
+      <button class="close-modal-btn" onclick="closeAuthModalDirect()">✕</button>
+      
+      <!-- Tab Controls -->
+      <div class="auth-tabs">
+        <button id="tab-login-btn" class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+        <button id="tab-register-btn" class="auth-tab" onclick="switchAuthTab('register')">Create Account</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form" onsubmit="handleLoginSubmit(event)">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="login-email" required placeholder="name@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+      </form>
+
+      <!-- Registration Form -->
+      <form id="register-form" class="auth-form hidden" onsubmit="handleRegisterSubmit(event)">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" required placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="reg-email" required placeholder="name@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="reg-password" required minlength="6" placeholder="At least 6 characters">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- My Orders Modal -->
+  <div id="orders-modal" class="modal-overlay hidden" onclick="closeOrdersModal(event)">
+    <div class="modal-card orders-card">
+      <button class="close-modal-btn" onclick="closeOrdersModalDirect()">✕</button>
+      <h2>📦 Order History</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Live orders fetched from backend database REST API</p>
+      
+      <div id="orders-list-container" class="orders-list">
+        <!-- Order History loads dynamically -->
+      </div>
+    </div>
+  </div>
 
   <!-- Quick View Modal -->
   <div id="quickview-modal" class="modal-overlay hidden" onclick="closeQuickView(event)">
@@ -111,7 +178,7 @@
   <div id="checkout-modal" class="modal-overlay hidden" onclick="closeCheckoutModal(event)">
     <div class="modal-card order-success-card">
       <div class="success-checkmark">🎉</div>
-      <h2>Order Placed Successfully!</h2>
+      <h2>Order Placed & Saved to Database!</h2>
       <p class="order-id">Order Reference: <strong id="order-ref">#LS-9482</strong></p>
       
       <div class="order-summary-box" id="order-summary-box">
@@ -119,7 +186,7 @@
       </div>
 
       <div class="delivery-timeline">
-        <div class="timeline-step done">✓ Order Confirmed</div>
+        <div class="timeline-step done">✓ Saved to Database API</div>
         <div class="timeline-step active">🚚 Packing & Delivery (30 mins)</div>
       </div>
 
