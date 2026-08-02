@@ -39,7 +39,7 @@ const products = [
     id: 6, 
     name: "Cooking Oil (1L)", 
     price: 180, 
-    image: "https://parikshasamachar.com/wp-content/uploads/2025/06/olive-oil-1433506_640.png",
+    image: "images/cooking_oil.png",
     description: "High-quality cooking oil, perfect for frying and sautéing."
   },
   { 
