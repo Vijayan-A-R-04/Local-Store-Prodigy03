@@ -77,11 +77,14 @@ let cart = [];
 // Load Products
 function loadProducts() {
   const productList = document.getElementById("product-list");
+  if (!productList) return;
+  productList.innerHTML = "";
   products.forEach(product => {
     const item = document.createElement("div");
     item.classList.add("product");
+    const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180' viewBox='0 0 300 180'><rect width='100%' height='100%' fill='%23e2e8f0'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23475569' font-family='sans-serif' font-size='16'>${encodeURIComponent(product.name)}</text></svg>`;
     item.innerHTML = `
-      <img src="${product.image}" alt="${product.name}">
+      <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null;this.src='${fallbackSvg}';">
       <div style="padding: 10px;">
         <h3>${product.name}</h3>
         <p>${product.description}</p>
@@ -96,12 +99,36 @@ function loadProducts() {
 // Add to Cart
 function addToCart(id) {
   const product = products.find(p => p.id === id);
-  cart.push(product);
-  updateCart();
+  if (product) {
+    cart.push(product);
+    updateCart();
+    openCart();
+  }
+}
 
-  // Show cart automatically if first item
-  if (cart.length === 1) {
-    document.getElementById("cart-section").classList.remove("hidden");
+// Open Cart Sidebar
+function openCart() {
+  const cartSection = document.getElementById("cart-section");
+  const cartOverlay = document.getElementById("cart-overlay");
+  if (cartSection) cartSection.classList.remove("hidden");
+  if (cartOverlay) cartOverlay.classList.remove("hidden");
+}
+
+// Close Cart Sidebar
+function closeCart() {
+  const cartSection = document.getElementById("cart-section");
+  const cartOverlay = document.getElementById("cart-overlay");
+  if (cartSection) cartSection.classList.add("hidden");
+  if (cartOverlay) cartOverlay.classList.add("hidden");
+}
+
+// Toggle Cart Visibility
+function toggleCart() {
+  const cartSection = document.getElementById("cart-section");
+  if (cartSection && cartSection.classList.contains("hidden")) {
+    openCart();
+  } else {
+    closeCart();
   }
 }
 
@@ -111,36 +138,37 @@ function updateCart() {
   const cartItems = document.getElementById("cart-items");
   const cartTotal = document.getElementById("cart-total");
 
-  cartCount.textContent = cart.length;
+  if (cartCount) cartCount.textContent = cart.length;
+  if (!cartItems) return;
+
   cartItems.innerHTML = "";
   let total = 0;
 
-  cart.forEach((item, index) => {
-    total += item.price;
-    const li = document.createElement("li");
-    li.innerHTML = `
-      ${item.name} - ₹${item.price}
-      <button onclick="removeFromCart(${index})">❌</button>
-    `;
-    cartItems.appendChild(li);
-  });
+  if (cart.length === 0) {
+    cartItems.innerHTML = '<li class="empty-cart-msg">Your cart is currently empty.</li>';
+  } else {
+    cart.forEach((item, index) => {
+      total += item.price;
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span>${item.name} - ₹${item.price}</span>
+        <button onclick="removeFromCart(${index})" title="Remove item">❌</button>
+      `;
+      cartItems.appendChild(li);
+    });
+  }
 
-  cartTotal.textContent = total.toFixed(2);
+  if (cartTotal) cartTotal.textContent = total.toFixed(2);
 }
 
 // Remove Item
 function removeFromCart(index) {
   cart.splice(index, 1);
   updateCart();
-
-  // Hide cart if empty
-  if (cart.length === 0) {
-    document.getElementById("cart-section").classList.add("hidden");
-  }
 }
 
 // Checkout
-document.getElementById("checkout-btn").addEventListener("click", () => {
+document.getElementById("checkout-btn")?.addEventListener("click", () => {
   if (cart.length === 0) {
     alert("Your cart is empty!");
     return;
@@ -148,15 +176,16 @@ document.getElementById("checkout-btn").addEventListener("click", () => {
   alert("Thank you for your purchase!");
   cart = [];
   updateCart();
-  document.getElementById("cart-section").classList.add("hidden");
+  closeCart();
 });
 
-// Toggle Cart Visibility
-function toggleCart() {
-  if (cart.length > 0) {
-    document.getElementById("cart-section").classList.toggle("hidden");
-  }
+// Initialize on DOM load or immediate execution
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    loadProducts();
+    updateCart();
+  });
+} else {
+  loadProducts();
+  updateCart();
 }
-
-// Load products on page load
-loadProducts();

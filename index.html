@@ -10,9 +10,9 @@
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="logo">🛍 Local Store</div>
-    <div class="cart" onclick="toggleCart()">
-      🛒 Cart <span id="cart-count">0</span>
-    </div>
+    <button class="cart-btn" id="cart-btn" onclick="toggleCart()" aria-label="View Shopping Cart">
+      🛒 Cart (<span id="cart-count">0</span>)
+    </button>
   </nav>
 
   <!-- Hero Banner -->
@@ -28,9 +28,15 @@
     </section>
   </main>
 
-  <!-- Cart Sidebar (Initially Hidden) -->
-  <aside id="cart-section" class="hidden">
-    <h2>Your Cart</h2>
+  <!-- Cart Backdrop Overlay -->
+  <div id="cart-overlay" class="cart-overlay hidden" onclick="toggleCart()"></div>
+
+  <!-- Cart Sidebar -->
+  <aside id="cart-section" class="hidden" aria-label="Shopping Cart">
+    <div class="cart-header">
+      <h2>Your Cart</h2>
+      <button class="close-cart-btn" onclick="toggleCart()" aria-label="Close Cart">✕</button>
+    </div>
     <ul id="cart-items"></ul>
     <div class="cart-footer">
       <p><strong>Total:</strong> ₹<span id="cart-total">0.00</span></p>
