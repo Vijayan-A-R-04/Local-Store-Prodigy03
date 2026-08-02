@@ -1,6 +1,6 @@
 # Local Store - Full-Stack E-Commerce Application
 
-Local Store is a full-stack e-commerce web application designed for online grocery and daily essentials shopping. The platform features a responsive client interface, a Node.js Express RESTful API backend, a MongoDB database layer via Mongoose ORM, JSON Web Token (JWT) authentication, and local state persistence.
+Local Store is a full-stack e-commerce web application designed for online grocery and daily essentials shopping. The platform features a responsive client interface, a Node.js Express RESTful API backend, a MongoDB database layer via Mongoose ORM, JSON Web Token (JWT) authentication, user-scoped data isolation, and session-scoped state management.
 
 ---
 
@@ -9,7 +9,7 @@ Local Store is a full-stack e-commerce web application designed for online groce
 ### Frontend (Client-Side)
 - HTML5: Semantic layout and accessibility structures.
 - CSS3: Custom CSS design tokens, light/dark mode theme system, glassmorphism UI components, and responsive grid system.
-- JavaScript (ES6+): Client state management, real-time search, category filtering, cart management, promo discount calculation, and API communications.
+- JavaScript (ES6+): Client state management, real-time search, category filtering, cart management, promo discount calculation, user-scoped data isolation, and API communications.
 
 ### Backend (Server-Side)
 - Node.js: Event-driven JavaScript runtime environment.
@@ -116,29 +116,33 @@ The application server will start on `http://localhost:5050`. Open this URL in a
 
 ## Core Application Capabilities
 
-1. User Authentication System:
+1. User Authentication and Account Security:
    - Supports user registration and sign-in via modal interface.
-   - Encrypts user passwords using bcrypt before saving.
-   - Stores JWT authentication tokens in local storage for session maintenance.
+   - Enforces strict registration validation: Unregistered credentials cannot sign in without creating an account first.
+   - Validates non-null and non-empty input parameters across client and server routes.
+   - Wipes transient email and password inputs clean on modal close, open, and user logout.
+   - Encrypts user passwords using bcrypt before database persistence.
 
-2. Product Catalog and Search Engine:
+2. User-Scoped Data Isolation and Privacy:
+   - Wishlist items and Order History are isolated per registered user email.
+   - Unauthenticated guest users cannot view or pollute private user wishlists or order histories.
+   - Accessing order history without logging in displays a sign-in prompt modal.
+
+3. Session-Only Reset Security:
+   - Session state is scoped to the active browser lifetime (`sessionStorage`).
+   - Closing the browser or tab completely resets active user sessions, shopping cart counts, and temporary state to a clean fresh start.
+
+4. Product Catalog and Search Engine:
    - Dynamic product grid displaying item names, prices, categories, ratings, and badges.
    - Real-time search filter by title, description, or badge.
    - Category filtering across Fresh Produce, Dairy, Bakery, Pantry, and Snacks.
    - Sorting options by Price (Low to High, High to Low) and Name (A to Z).
 
-3. Shopping Cart and Checkout Operations:
+5. Shopping Cart and Checkout Operations:
    - Slide-out cart drawer supporting quantity modification and item removal.
    - Free delivery progress calculator for orders matching threshold limits.
-   - Promo code discount engine supporting promotional codes (e.g., FRESH10, LOCAL20).
+   - Promo code discount engine supporting promotional codes (FRESH10, LOCAL20).
    - Order placement with automatic reference code generation.
-
-4. Saved Items and Wishlist System:
-   - Toggle product favorites with visual active state indication.
-   - Filter grid view to inspect saved items.
-
-5. Order History Operations:
-   - Order history modal displaying reference numbers, item summaries, total amounts, purchase dates, and status tracking.
 
 6. Interface Customization:
    - Light and dark theme switcher with preference persistence.

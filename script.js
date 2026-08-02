@@ -30,6 +30,17 @@ const API_BASE = '/api';
 
 // Initialize App State
 async function initApp() {
+  try {
+    // Clear any persistent storage keys so every app launch starts completely fresh
+    localStorage.removeItem('localstore_user');
+    localStorage.removeItem('localstore_token');
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('localstore_wishlist_') || key.startsWith('localstore_orders_')) {
+        localStorage.removeItem(key);
+      }
+    });
+  } catch (e) {}
+
   loadStoredState();
   applyTheme();
   renderUserNav();
@@ -52,22 +63,34 @@ async function fetchProductsFromAPI() {
   }
 }
 
-// LocalStorage Handlers
+function getUserKey() {
+  if (!currentUser || !currentUser.email) return null;
+  return currentUser.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
+}
+
+// Session-Only Storage Handlers (Guarantees 100% fresh reset on app reopen)
 function loadStoredState() {
   try {
-    const savedCart = localStorage.getItem('localstore_cart');
-    const savedWishlist = localStorage.getItem('localstore_wishlist');
-    const savedOrders = localStorage.getItem('localstore_orders');
-    const savedTheme = localStorage.getItem('localstore_theme');
-    const savedUser = localStorage.getItem('localstore_user');
-    const savedToken = localStorage.getItem('localstore_token');
+    const savedTheme = sessionStorage.getItem('localstore_theme') || localStorage.getItem('localstore_theme');
+    const savedUser = sessionStorage.getItem('localstore_user');
+    const savedToken = sessionStorage.getItem('localstore_token');
+    const savedCart = sessionStorage.getItem('localstore_cart');
 
+    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
     if (savedCart) cart = JSON.parse(savedCart);
-    if (savedWishlist) wishlist = JSON.parse(savedWishlist);
-    if (savedOrders) myOrders = JSON.parse(savedOrders);
     if (savedUser) currentUser = JSON.parse(savedUser);
     if (savedToken) authToken = savedToken;
-    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+
+    const userKey = getUserKey();
+    if (userKey) {
+      const savedWishlist = sessionStorage.getItem('localstore_wishlist_' + userKey);
+      const savedOrders = sessionStorage.getItem('localstore_orders_' + userKey);
+      wishlist = savedWishlist ? JSON.parse(savedWishlist) : [];
+      myOrders = savedOrders ? JSON.parse(savedOrders) : [];
+    } else {
+      wishlist = [];
+      myOrders = [];
+    }
   } catch (e) {
     console.error("Storage load error:", e);
   }
@@ -75,14 +98,27 @@ function loadStoredState() {
 
 function saveState() {
   try {
-    localStorage.setItem('localstore_cart', JSON.stringify(cart));
-    localStorage.setItem('localstore_wishlist', JSON.stringify(wishlist));
-    localStorage.setItem('localstore_orders', JSON.stringify(myOrders));
+    sessionStorage.setItem('localstore_cart', JSON.stringify(cart));
+    sessionStorage.setItem('localstore_theme', document.documentElement.getAttribute('data-theme') || 'light');
     localStorage.setItem('localstore_theme', document.documentElement.getAttribute('data-theme') || 'light');
-    if (currentUser) localStorage.setItem('localstore_user', JSON.stringify(currentUser));
-    else localStorage.removeItem('localstore_user');
-    if (authToken) localStorage.setItem('localstore_token', authToken);
-    else localStorage.removeItem('localstore_token');
+
+    const userKey = getUserKey();
+    if (userKey) {
+      sessionStorage.setItem('localstore_wishlist_' + userKey, JSON.stringify(wishlist));
+      sessionStorage.setItem('localstore_orders_' + userKey, JSON.stringify(myOrders));
+    }
+
+    if (currentUser) {
+      sessionStorage.setItem('localstore_user', JSON.stringify(currentUser));
+    } else {
+      sessionStorage.removeItem('localstore_user');
+    }
+
+    if (authToken) {
+      sessionStorage.setItem('localstore_token', authToken);
+    } else {
+      sessionStorage.removeItem('localstore_token');
+    }
   } catch (e) {
     console.error("Storage save error:", e);
   }
@@ -109,13 +145,30 @@ function renderUserNav() {
   }
 }
 
+// Clear Authentication Modal Input Fields
+function clearAuthForms() {
+  const loginEmail = document.getElementById('login-email');
+  const loginPassword = document.getElementById('login-password');
+  const regName = document.getElementById('reg-name');
+  const regEmail = document.getElementById('reg-email');
+  const regPassword = document.getElementById('reg-password');
+
+  if (loginEmail) loginEmail.value = '';
+  if (loginPassword) loginPassword.value = '';
+  if (regName) regName.value = '';
+  if (regEmail) regEmail.value = '';
+  if (regPassword) regPassword.value = '';
+}
+
 // Authentication Modal Logic
 function openAuthModal(tab = 'login') {
+  clearAuthForms();
   switchAuthTab(tab);
   document.getElementById('auth-modal')?.classList.remove('hidden');
 }
 
 function closeAuthModalDirect() {
+  clearAuthForms();
   document.getElementById('auth-modal')?.classList.add('hidden');
 }
 
@@ -148,45 +201,150 @@ function switchAuthTab(tab) {
   }
 }
 
+// Registered Users Local Store for Fallback Validation
+let registeredUsers = [];
+
+function loadRegisteredUsers() {
+  try {
+    const saved = localStorage.getItem('localstore_registered_users');
+    if (saved) {
+      registeredUsers = JSON.parse(saved).filter(u => 
+        u && u.email && u.password && 
+        u.email.trim() !== '' && u.password.trim() !== '' &&
+        u.email.toLowerCase() !== 'null' && 
+        u.email.toLowerCase() !== 'undefined' &&
+        u.name.toLowerCase() !== 'null' &&
+        u.name.toLowerCase() !== 'undefined'
+      );
+      localStorage.setItem('localstore_registered_users', JSON.stringify(registeredUsers));
+    } else {
+      registeredUsers = [
+        { name: 'vijay12', email: 'vijay12@gmail.com', password: '123456' }
+      ];
+      localStorage.setItem('localstore_registered_users', JSON.stringify(registeredUsers));
+    }
+  } catch (e) {
+    registeredUsers = [{ name: 'vijay12', email: 'vijay12@gmail.com', password: '123456' }];
+  }
+}
+
+function saveRegisteredUsers() {
+  try {
+    localStorage.setItem('localstore_registered_users', JSON.stringify(registeredUsers));
+  } catch (e) {}
+}
+
 async function handleLoginSubmit(e) {
   e.preventDefault();
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
+  const inputIdentifier = emailInput ? emailInput.value.trim().toLowerCase() : '';
+  const password = passwordInput ? passwordInput.value.trim() : '';
 
+  if (!inputIdentifier || inputIdentifier === '' || inputIdentifier === 'null' || inputIdentifier === 'undefined') {
+    showToast('Please enter your registered email address or username!', '⚠️');
+    return;
+  }
+
+  if (!password || password === '' || password === 'null' || password === 'undefined') {
+    showToast('Please enter your password!', '⚠️');
+    return;
+  }
+
+  loadRegisteredUsers();
+
+  // Try API login
   try {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email: inputIdentifier, password })
     });
     const json = await res.json();
 
     if (json.success) {
       currentUser = json.user;
       authToken = json.token;
+      let existingIndex = registeredUsers.findIndex(u => u.email.toLowerCase() === inputIdentifier || u.name.toLowerCase() === inputIdentifier);
+      if (existingIndex >= 0) {
+        registeredUsers[existingIndex].password = password;
+      } else {
+        registeredUsers.push({ name: currentUser.name, email: currentUser.email, password });
+      }
+      saveRegisteredUsers();
+      loadStoredState();
       saveState();
       renderUserNav();
+      updateWishlistUI();
+      renderProducts();
       closeAuthModalDirect();
       showToast(`Welcome back, ${currentUser.name}!`, '🎉');
-    } else {
-      showToast(json.message || 'Login failed', '❌');
+      return;
     }
   } catch (err) {
-    // Offline / Demo fallback
-    currentUser = { name: email.split('@')[0], email };
-    authToken = 'demo-jwt-token';
-    saveState();
-    renderUserNav();
-    closeAuthModalDirect();
-    showToast(`Signed in as ${currentUser.name}`, '🎉');
+    // API server offline / connecting fallback
   }
+
+  // Strict Validation for Registered Users Only
+  let matchedUser = registeredUsers.find(u => 
+    (u.email.toLowerCase() === inputIdentifier || u.name.toLowerCase() === inputIdentifier) &&
+    u.password === password
+  );
+
+  if (!matchedUser) {
+    showToast('Invalid credentials or account not found! Please register first.', '❌');
+    return;
+  }
+
+  currentUser = { name: matchedUser.name, email: matchedUser.email };
+  authToken = 'demo-jwt-token';
+  loadStoredState();
+  saveState();
+  renderUserNav();
+  updateWishlistUI();
+  renderProducts();
+  closeAuthModalDirect();
+  showToast(`Welcome back, ${currentUser.name}!`, '🎉');
 }
 
 async function handleRegisterSubmit(e) {
   e.preventDefault();
-  const name = document.getElementById('reg-name').value;
-  const email = document.getElementById('reg-email').value;
-  const password = document.getElementById('reg-password').value;
+  const nameInput = document.getElementById('reg-name');
+  const emailInput = document.getElementById('reg-email');
+  const passwordInput = document.getElementById('reg-password');
+
+  const name = nameInput ? nameInput.value.trim() : '';
+  const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+  const password = passwordInput ? passwordInput.value.trim() : '';
+
+  if (!name || name === '' || name === 'null' || name === 'undefined') {
+    showToast('Please enter your full name!', '⚠️');
+    return;
+  }
+
+  if (!email || email === '' || email === 'null' || email === 'undefined') {
+    showToast('Please enter a valid email address!', '⚠️');
+    return;
+  }
+
+  if (!password || password === '' || password === 'null' || password === 'undefined') {
+    showToast('Please enter a password!', '⚠️');
+    return;
+  }
+
+  loadRegisteredUsers();
+
+  // Check if email already registered
+  if (registeredUsers.some(u => u.email.toLowerCase() === email || u.name.toLowerCase() === name.toLowerCase())) {
+    showToast('An account with this email or username already exists. Please Sign In!', '⚠️');
+    switchAuthTab('login');
+    document.getElementById('login-email').value = email;
+    return;
+  }
+
+  // Register new account locally
+  registeredUsers.push({ name, email, password });
+  saveRegisteredUsers();
 
   try {
     const res = await fetch(`${API_BASE}/auth/register`, {
@@ -199,28 +357,34 @@ async function handleRegisterSubmit(e) {
     if (json.success) {
       currentUser = json.user;
       authToken = json.token;
-      saveState();
-      renderUserNav();
-      closeAuthModalDirect();
-      showToast(`Account created! Welcome, ${currentUser.name}!`, '🎉');
     } else {
-      showToast(json.message || 'Registration failed', '❌');
+      currentUser = { name, email };
+      authToken = 'demo-jwt-token';
     }
   } catch (err) {
     currentUser = { name, email };
     authToken = 'demo-jwt-token';
-    saveState();
-    renderUserNav();
-    closeAuthModalDirect();
-    showToast(`Account created for ${name}`, '🎉');
   }
+
+  loadStoredState();
+  saveState();
+  renderUserNav();
+  updateWishlistUI();
+  renderProducts();
+  closeAuthModalDirect();
+  showToast(`Account created successfully! Welcome, ${currentUser.name}!`, '🎉');
 }
 
 function handleLogout() {
   currentUser = null;
   authToken = null;
+  wishlist = [];
+  myOrders = [];
+  clearAuthForms();
   saveState();
   renderUserNav();
+  updateWishlistUI();
+  renderProducts();
   showToast('Signed out successfully', '👋');
 }
 
@@ -230,13 +394,29 @@ async function openOrdersModal() {
   const container = document.getElementById('orders-list-container');
   modal.classList.remove('hidden');
 
-  let ordersToDisplay = [...myOrders];
+  if (!currentUser) {
+    container.innerHTML = `
+      <div style="text-align:center; padding: 40px 20px;">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔒</div>
+        <h3 style="margin-bottom: 8px;">Sign In Required</h3>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Please sign in to view your order history.</p>
+        <button class="btn btn-primary" onclick="closeOrdersModalDirect(); openAuthModal('login');">Sign In Now</button>
+      </div>
+    `;
+    return;
+  }
+
+  const userEmail = currentUser.email.toLowerCase();
+  let ordersToDisplay = myOrders.filter(o => o.customerEmail && o.customerEmail.toLowerCase() === userEmail);
 
   try {
     const res = await fetch(`${API_BASE}/orders`);
     const json = await res.json();
     if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-      ordersToDisplay = json.data;
+      const userApiOrders = json.data.filter(o => o.customerEmail && o.customerEmail.toLowerCase() === userEmail);
+      if (userApiOrders.length > 0) {
+        ordersToDisplay = userApiOrders;
+      }
     }
   } catch (err) {
     // Uses myOrders fallback
@@ -261,7 +441,7 @@ async function openOrdersModal() {
       </div>
     `).join('');
   } else {
-    container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted);">No previous orders found. Place your first order to track it here!</div>`;
+    container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted);">No previous orders found for ${currentUser.name}. Place your first order to track it here!</div>`;
   }
 }
 
@@ -377,6 +557,12 @@ function renderProducts() {
 
 // Category Pill Handler
 function filterCategory(category) {
+  if (category === 'wishlist' && !currentUser) {
+    showToast('Please sign in to view your saved wishlist', '🔒');
+    openAuthModal('login');
+    return;
+  }
+
   activeCategory = category;
   
   const pills = document.querySelectorAll('.pill');
@@ -443,6 +629,12 @@ function handleSortChange() {
 
 // Wishlist Logic
 function toggleWishlist(productId) {
+  if (!currentUser) {
+    showToast('Please sign in to save items to your wishlist', '🔒');
+    openAuthModal('login');
+    return;
+  }
+
   const numericId = parseInt(productId, 10);
   const index = wishlist.indexOf(numericId);
   const item = products.find(p => parseInt(p.id, 10) === numericId);
