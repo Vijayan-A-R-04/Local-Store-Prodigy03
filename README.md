@@ -56,7 +56,7 @@ No build tools, bundlers, or package installations are required.
 ### Option 1: Direct File Open
 1. **Clone or Download** this repository:
    ```bash
-   git clone https://github.com/your-username/local-store.html.git
+   git clone https://github.com/Vijayan-A-R-04/Local-Store-Prodigy03.git
    ```
 2. Navigate to the project folder and double-click `index.html` to open it in your default web browser.
 
